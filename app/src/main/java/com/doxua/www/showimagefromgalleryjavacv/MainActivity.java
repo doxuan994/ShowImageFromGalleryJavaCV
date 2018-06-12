@@ -1,12 +1,25 @@
 package com.doxua.www.showimagefromgalleryjavacv;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import org.bytedeco.javacpp.opencv_core;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+
+
+//import org.opencv.android.Utils;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +59,42 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
             Uri imageUri = data.getData();
-            imageView.setImageURI(imageUri);
+
+
+            // Convert to OpenCV.
+
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            // Get the cursor
+            Cursor cursor = getContentResolver().query(imageUri,
+                    filePathColumn, null, null, null);
+            // Move to first row
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imgDecodableString = cursor.getString(columnIndex);
+            cursor.close();
+            File file = new File(imgDecodableString);
+
+            Log.e(getString(R.string.app_name), "File exists: " + file.exists());
+            Log.e(getString(R.string.app_name), "Trying to read: " + file.getAbsolutePath());
+            Mat image = Imgcodecs.imread(file.getAbsolutePath(), Imgcodecs.CV_LOAD_IMAGE_COLOR);
+            Bitmap resultBitmap = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.ARGB_8888);;
+            // Converts OpenCV Mat to Android Bitmap.
+            // Utils.matToBitmap(image, resultBitmap);
+            Bitmap mResult = resultBitmap;
+
+            imageView.setImageBitmap(mResult);
+
+
+
+
+            // Display the image.
+
+
+
+
+            // imageView.setImageURI(imageUri);
         }
     }
 
