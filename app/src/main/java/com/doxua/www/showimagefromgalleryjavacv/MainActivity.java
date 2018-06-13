@@ -1,15 +1,12 @@
 package com.doxua.www.showimagefromgalleryjavacv;
 
-import android.annotation.SuppressLint;
+
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.FaceDetector;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,26 +16,18 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_objdetect;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
 
 
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.io.IOException;
 
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2GRAY;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
-
-
     private static final int PICK_IMAGE = 100;
     private ImageView imageView;
     private TextView textView;
@@ -64,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Add-on method
     private void openGallery() {
         Intent gallery =
                 new Intent(Intent.ACTION_PICK,
@@ -72,15 +60,10 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
-
-    // Add-on method
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
-
-
-
             Uri imageUri = data.getData();
 
             // Convert to Bitmap.
@@ -91,15 +74,10 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
-
             // Display the image.
             imageView.setImageBitmap(bitmap);
             // Detect faces and display number of faces in the text view.
             detectAndDisplay(bitmap, textView);
-
-
-
         }
     }
 
@@ -116,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
         // Load the CascadeClassifier class to detect objects.
         faceDetector = TrainHelper.loadClassifierCascade(MainActivity.this, R.raw.frontalface);
 
-
-
         // Convert to Gray scale.
         cvtColor(mat, mat, CV_BGR2GRAY);
         // Vector of rectangles where each rectangle contains the detected object.
@@ -131,9 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Count number of faces and display in text view.
         int numFaces = (int) faces.size();
-        // String s = Integer.toString(numFaces);
-
-        facesValue.setText("" + numFaces);
+        facesValue.setText(Integer.toString(numFaces));
 
     }
 }
